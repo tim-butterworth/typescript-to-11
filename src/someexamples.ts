@@ -1,5 +1,7 @@
 import * as R from "ramda";
+import "jasmine";
 
+type SpyObj<T> = jasmine.SpyObj<T>;
 type ToOptional<T> = {
     [P in keyof T]?: T[P];
 };
@@ -98,6 +100,12 @@ const someExamples: source<void> = (): void => {
     };
     console.log(badFun(false));
 
+    /*
+      Thanks to Michael Lavrisha for this example
+    */
+
+    const spyObject: SpyObj<BigObject> = jasmine.createSpyObj("bigObject", ["getInventory"]);
+    console.log(spyObject);
 };
 
 export { someExamples };

@@ -1,33 +1,34 @@
 {
-  "name": "secret-santa-ui",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "@types/ramda": "^0.25.20",
-    "@types/react": "^16.0.31",
-    "@types/react-dom": "^16.0.3",
-    "express": "^4.16.2",
-    "karma-webpack": "^3.0.0",
-    "ramda": "^0.25.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-redux": "^5.0.7",
-    "redux": "^3.7.2",
-    "rxjs": "^5.5.7"
-  },
-  "scripts": {
-    "build": "webpack",
-    "start": "node ./dev-server/server.js",
-    "test": "yarn build && yarn karma start"
-  },
-  "devDependencies": {
-    "@types/jasmine": "^2.8.6",
-    "jsdom": "^11.8.0",
-    "source-map-loader": "^0.2.3",
-    "ts-loader": "^4.3.0",
-    "typescript": "^2.6.2",
-    "webpack": "^4.9.1",
-    "webpack-cli": "^2.1.4"
-  }
+    "name": "secret-santa-ui",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "dependencies": {
+	"@types/ramda": "^0.25.20",
+	"@types/react": "^16.0.31",
+	"@types/react-dom": "^16.0.3",
+	"express": "^4.16.2",
+	"jasmine": "^3.1.0",
+	"karma-webpack": "^3.0.0",
+	"ramda": "^0.25.0",
+	"react": "^16.2.0",
+	"react-dom": "^16.2.0",
+	"react-redux": "^5.0.7",
+	"redux": "^3.7.2",
+	"rxjs": "^5.5.7"
+	"@types/jasmine": "^2.8.6",
+    },
+    "scripts": {
+	"build": "webpack",
+	"start": "node ./dev-server/server.js",
+	"test": "yarn build && yarn karma start"
+    },
+    "devDependencies": {
+	"jsdom": "^11.8.0",
+	"source-map-loader": "^0.2.3",
+	"ts-loader": "^4.3.0",
+	"typescript": "^2.6.2",
+	"webpack": "^4.9.1",
+	"webpack-cli": "^2.1.4"
+    }
 }
