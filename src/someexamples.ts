@@ -18,13 +18,19 @@ interface BigObject {
 }
 
 const someExamples: source<void> = (): void => {
-    const myObj1: BigObject = { key1: "hi" };
-    console.log(myObj1)
+    /*
+      These lines give a typescript error because the object literal does not match the type of BigObject
+    */
+
+    //    const myObj1: BigObject = { key1: "hi" };
+    //    console.log(myObj1)
 
     const myObj2: Partial<BigObject> = { key1: "hi" };
     console.log(myObj2);
 
-    const bigObjectFactory: (partial?: ToOptional<BigObject>) => BigObject = (partial?: ToOptional<BigObject>): BigObject => {
+    const bigObjectFactory: (
+        partial?: ToOptional<BigObject>
+    ) => BigObject = (partial?: ToOptional<BigObject>): BigObject => {
         const defaultBigObject: BigObject = {
             key1: "value1",
             key2: "value2",
@@ -38,10 +44,11 @@ const someExamples: source<void> = (): void => {
 
     const myObj: BigObject = bigObjectFactory();
 
-    console.log(myObj)
+    console.log(myObj);
 
-
-    const bigObjectFactoryCleaner: f<ToOptional<BigObject>, BigObject> = (partial: ToOptional<BigObject>): BigObject => {
+    const bigObjectFactoryCleaner: f<ToOptional<BigObject>, BigObject> = (
+        partial: ToOptional<BigObject>
+    ): BigObject => {
         const defaultBigObject: BigObject = {
             key1: "value1",
             key2: "value2",
@@ -84,14 +91,12 @@ const someExamples: source<void> = (): void => {
 
     console.log(calculateArea(Shape.RECTANGLE));
 
-
-
     const badFun = (arg: boolean): number | void => {
         if (arg) {
             return 1;
         }
-    }
-    console.log(badFun(false))
+    };
+    console.log(badFun(false));
 
 };
 
