@@ -106,6 +106,27 @@ const someExamples: source<void> = (): void => {
 
     const spyObject: SpyObj<BigObject> = jasmine.createSpyObj("bigObject", ["getInventory"]);
     console.log(spyObject);
+
+
+    /*
+      Thanks to TJ for this example
+    */
+
+    type ObjectType = {
+        key1: string;
+        key2: string;
+        keyInfinity: string;
+    };
+    type UnionOfKeysType = keyof ObjectType;
+
+    const keyList: UnionOfKeysType[] = [
+        "key1",
+        "key2",
+        "keyInfinity",
+        //        "notRight",
+    ];
+
+    console.log(keyList);
 };
 
 export { someExamples };
