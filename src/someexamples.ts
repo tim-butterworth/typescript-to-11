@@ -360,4 +360,27 @@ const ourAppThinksItIs: APIResponseJSON = fromTheApi as APIResponseJSON;
 console.log(ourAppThinksItIs.keyFromApi);
 console.log(ourAppThinksItIs.keyFromApi);
 
+type SomeTypeThatWillBetrayUs = {
+    key1: string;
+    key2: string;
+    key3: string;
+    key4: string;
+}
+
+const instance: SomeTypeThatWillBetrayUs = {
+    key1: "",
+    key2: "",
+    key3: "",
+    key4: ""
+}
+const keys = Object.keys(instance);
+// const keys = Object.keys(instance) as Array<keyof typeof instance>;
+
+// keys.forEach((key) => {
+//     const plucked = instance[key];
+//     console.log(plucked);
+// })
+
+console.log(keys);
+
 export { someExamples };
