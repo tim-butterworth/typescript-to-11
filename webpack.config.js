@@ -39,30 +39,6 @@ const getDirectoriesAndFiles = (root) => {
     );
 }
 
-const getFileListRecursively = (rootDir) => {
-
-    let fileList = []
-    let directories = [rootDir]
-
-    while(directories.length > 0) {
-	const result = R.pipe(
-	    R.map
-	    , R.reduce(
-		(acc, current) =>  ({
-		    files: R.concat(acc.files, current.files)
-		    , directories: R.concat(acc.directories, current.directories)
-		})
-		, {files: [], directories: []}
-	    )
-	)(getDirectoriesAndFiles, directories)
-
-	directories = result.directories
-	fileList = R.concat(fileList, result.files)
-    }
-
-    return fileList
-}
-
 process.traceDeprecation = true
 
 module.exports = {

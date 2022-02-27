@@ -1,16 +1,18 @@
 import * as R from "ramda";
-import "jasmine";
 
-type SpyObj<T> = jasmine.SpyObj<T>;
+// https://www.typescriptlang.org/docs/handbook/2/mapped-types.html
+// mapped types
 type ToOptional<T> = {
     [P in keyof T]?: T[P];
 };
-// http://www.typescriptlang.org/docs/handbook/advanced-types.html
-// mapped types
+
+// Generics and general aliasing
 type f<A, B> = (a: A) => B;
 type source<T> = () => T;
+type sink<T> = (t: T) => void;
 
 // Test data
+// Nominal vs Structural
 interface BigObject {
     key1: string;
     key2: string;
@@ -18,6 +20,77 @@ interface BigObject {
         childKey: string;
     };
 }
+
+type Child = {
+    childKey: string;
+};
+type BigObjectAgain = {
+    key1: string;
+    key2: string;
+    key3: Child;
+};
+
+type BiggerObject = {
+    key1: string;
+    key2: string;
+    key3: {
+        childKey: string;
+    };
+    extraKey: string;
+}
+type BiggerObjectAgain = BigObject & { extraKey: string };
+
+const whoCanGetIn: sink<BigObject> = (_obj: BigObject) => {
+    console.log("We did it!")
+}
+
+// whoCanGetIn({
+//     blah: "",
+// });
+
+whoCanGetIn({
+    key1: "",
+    key2: "",
+    key3: {
+        childKey: "something"
+    }
+});
+
+const sameType: BigObject = {
+    key1: "",
+    key2: "",
+    key3: {
+        childKey: ""
+    }
+}
+whoCanGetIn(sameType);
+
+const otherType: BigObjectAgain = {
+    key1: "",
+    key2: "",
+    key3: {
+        childKey: ""
+    }
+}
+whoCanGetIn(otherType);
+
+const biggerObject: BiggerObject = {
+    extraKey: "something",
+    key1: "",
+    key2: "",
+    key3: {
+        childKey: ""
+    }
+}
+// const biggerObject: BiggerObjectAgain = {
+//     extraKey: "something",
+//     key1: "",
+//     key2: "",
+//     key3: {
+//         childKey: ""
+//     }
+// }
+whoCanGetIn(biggerObject);
 
 const someExamples: source<void> = (): void => {
     /*
@@ -60,6 +133,11 @@ const someExamples: source<void> = (): void => {
         };
 
         return R.merge(defaultBigObject, partial);
+        // return {
+        //     ...defaultBigObject,
+        //     ...partial
+        // };
+        // return Object.assign({}, defaultBigObject, partial);
     };
 
     const result: BigObject = bigObjectFactory();
@@ -78,35 +156,44 @@ const someExamples: source<void> = (): void => {
         RECTANGLE,
     }
 
-    const assertNever: f<never, never> = (): never => {
-        throw new Error();
-    };
-
+    // works great if there is a return value
     const calculateArea: f<Shape, number> = (shape: Shape): number => {
         switch (shape) {
             case Shape.CIRCLE: return 1;
             case Shape.SQUARE: return 2;
             case Shape.RECTANGLE: return 3;
-            default: return assertNever(shape);
         }
     };
 
-    console.log(calculateArea(Shape.RECTANGLE));
+    // is possible even if there is no return value
+    const assertNever = <T>(n: never): T => {
+        throw new Error();
+    };
+    const printAreaName: (shape: Shape) => void = (shape: Shape) => {
+        switch (shape) {
+            case Shape.CIRCLE:
+                console.log("So round");
+                break;
+            case Shape.RECTANGLE:
+                console.log("All the sides are not the same length");
+                break;
+            case Shape.SQUARE:
+                console.log("Squary");
+                break;
+            default:
+                assertNever(shape)
+        }
+    }
 
-    const badFun = (arg: boolean): number | void => {
+    console.log(calculateArea(Shape.RECTANGLE));
+    console.log(printAreaName(Shape.SQUARE));
+
+    const badFun: f<boolean, number | void> = (arg: boolean): number | void => {
         if (arg) {
             return 1;
         }
     };
     console.log(badFun(false));
-
-    /*
-      Thanks to Michael Lavrisha for this example
-    */
-
-    const spyObject: SpyObj<BigObject> = jasmine.createSpyObj("bigObject", ["getInventory"]);
-    console.log(spyObject);
-
 
     /*
       Thanks to TJ for this example
@@ -123,40 +210,98 @@ const someExamples: source<void> = (): void => {
         "key1",
         "key2",
         "keyInfinity",
-        //        "notRight",
+        //    "notRight",
     ];
 
     console.log(keyList);
 };
 
-export { someExamples };
+/*
+When stuff goes wrong
+*/
 
-// {
-//     "compilerOptions": {
-//         "outDir": "./dist/",
-//         "sourceMap": true,
-//         "module": "commonjs",
-//         "target": "es5",
-//         "jsx": "react",
-//         "forceConsistentCasingInFileNames": true,
-//         "noImplicitAny": true,
-//         "noImplicitReturns": true,
-//         "strict": true,
-//         "noUnusedLocals": true,
-//         "lib": [
-// 	    "es2015",
-// 	    "dom"
-// 	],
-// 	"typeRoots": [
-// 	    "/node_modules/@types"
-// 	],
-// 	"types": [
-//             "jasmine",
-//             "node"
-//         ]
-//     },
-//     "include": [
-//         "src/**/*.ts",
-//         "node_modules/@types"
-//     ]
-// }
+type BigChildObject = {
+    a: BigObjectAgain;
+    b: {
+        a: BigObject;
+    }
+}
+type ReallyBigObject = {
+    child1: BigObject;
+    child2: BigObjectAgain;
+    child3: {
+        grandChild1: BiggerObject;
+        grandChild2: {
+            evenDeeper: BiggerObject;
+        }
+    },
+    child4: {
+        blah: BigObject;
+    },
+    child5: string;
+    child6: number;
+    child7: BigChildObject;
+};
+
+// const factory: source<ReallyBigObject> = () => {
+//     return {
+
+//     }
+// };
+
+// console.log(factory());
+
+/*
+Typescript betrayal (https://effectivetypescript.com/2021/05/06/unsoundness/)
+*/
+
+type JustAMap = { [k: string]: string };
+const betrayalMap: JustAMap = {
+    key: "value"
+};
+
+const valueForKey = betrayalMap["key"];
+const betrayed = betrayalMap["not_a_key"];
+// noUncheckedIndexedAccess
+
+betrayed.toUpperCase();
+
+console.log(valueForKey);
+console.log(betrayed);
+
+type LessBetrayed = Map<string, string>;
+const lessBetrayed: LessBetrayed = new Map();
+lessBetrayed.set("key", "value");
+
+const fromMap = lessBetrayed.get("key");
+
+// fromMap.toUpperCase()
+
+type BaseType = {
+    "key1": string;
+    "key2": string;
+};
+type NotBetrayedAtAll = { [k in keyof BaseType]: string };
+const notBetrayed: NotBetrayedAtAll = {
+    "key1": "",
+    "key2": "something"
+}
+
+const key1Value = notBetrayed["key1"];
+// const notAKey = notBetrayed["notAKey"];
+
+console.log(key1Value);
+
+// Ultimate betrayal
+const fromTheApi: unknown = {
+    key: "value"
+}
+
+type APIResponseJSON = {
+    keyFromApi: string
+};
+const ourAppThinksItIs: APIResponseJSON = fromTheApi as APIResponseJSON;
+console.log(ourAppThinksItIs.keyFromApi);
+console.log(ourAppThinksItIs.keyFromApi);
+
+export { someExamples };
