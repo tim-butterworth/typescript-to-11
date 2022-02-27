@@ -4,38 +4,38 @@ const R = require('ramda')
 const fs = require('fs')
 
 const maybeUpdate = (updateFn) => (predicate) => (basis) => {
-    if(predicate()) {
-	return updateFn(basis);
+    if (predicate()) {
+        return updateFn(basis);
     } else {
-	return basis;
+        return basis;
     }
 }
 
 const getDirectoriesAndFiles = (root) => {
-    const allFiles = fs.readdirSync(root).map((fileName) => root+"/"+fileName);
+    const allFiles = fs.readdirSync(root).map((fileName) => root + "/" + fileName);
 
     const isFile = (filePath) => fs.lstatSync(filePath).isFile()
     const isDirectory = (filePath) => fs.lstatSync(filePath).isDirectory()
 
     const getUpdateFn = (detectFile, detectDirectory) => (acc, path) => {
-	const appender = R.append(path)
-	const updater = maybeUpdate(appender)
+        const appender = R.append(path)
+        const updater = maybeUpdate(appender)
 
-	const updatedFiles = updater(() => detectFile(path))(acc.files)
-	const updatedDirectories = updater(() => detectDirectory(path))(acc.directories)
+        const updatedFiles = updater(() => detectFile(path))(acc.files)
+        const updatedDirectories = updater(() => detectDirectory(path))(acc.directories)
 
-	return {
-	    files: updatedFiles,
-	    directories: updatedDirectories
-	}
+        return {
+            files: updatedFiles,
+            directories: updatedDirectories
+        }
     };
 
     const updateFn = getUpdateFn(isFile, isDirectory);
 
     return R.reduce(
-	updateFn
-	, {files: [],directories: []}
-	, allFiles
+        updateFn
+        , { files: [], directories: [] }
+        , allFiles
     );
 }
 
@@ -57,7 +57,7 @@ module.exports = {
     module: {
         rules: [
             { test: /\.tsx?$/, loader: "ts-loader" }
-	    ,{ enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
+            , { enforce: "pre", test: /\.js$/, loader: "source-map-loader" }
         ]
     },
     plugins: [

@@ -38,7 +38,7 @@ type BiggerObject = {
     };
     extraKey: string;
 }
-type BiggerObjectAgain = BigObject & { extraKey: string };
+// type BiggerObjectAgain = BigObject & { extraKey: string };
 
 const whoCanGetIn: sink<BigObject> = (_obj: BigObject) => {
     console.log("We did it!")
@@ -91,6 +91,61 @@ const biggerObject: BiggerObject = {
 //     }
 // }
 whoCanGetIn(biggerObject);
+
+// How to tell things apart with structural types? (discriminated unions) 
+
+// type DataForShape = {
+//     perimeter: number;
+// }
+// type RectangleData = DataForShape;
+// type SquareData = DataForShape;
+// type ChircleData = DataForShape;
+
+// type ShapeData = RectangleData | SquareData | ChircleData;
+
+// const areaFromShapeData: f<ShapeData, number> = (data: ShapeData): number => {
+//     // no way to know if it is a circle, rectangle, or square
+//     throw new Error("No way to tell the shapes apart");
+// };
+
+// console.log(areaFromShapeData({ perimeter: 10 }));
+
+
+enum Species {
+    SQUARE,
+    CIRCLE,
+    RECTANGLE,
+}
+type DataForShape<SPECIES extends Species> = {
+    tag: SPECIES,
+    perimeter: number;
+}
+type RectangleData = DataForShape<Species.RECTANGLE> & { ratio: number };
+type SquareData = DataForShape<Species.SQUARE>;
+type ChircleData = DataForShape<Species.CIRCLE>;
+
+type ShapeData = RectangleData | SquareData | ChircleData;
+
+const areaFromShapeData: f<ShapeData, number> = (data: ShapeData): number => {
+    switch (data.tag) {
+        case Species.CIRCLE:
+            const diameter = (data.perimeter / Math.PI);
+            const radius = diameter / 2;
+            return (Math.PI * radius) * radius;
+        case Species.RECTANGLE:
+            const halfPerimeter = data.perimeter / 2;
+            const shortSide = halfPerimeter / (data.ratio + 1)
+            const longSide = halfPerimeter - shortSide
+            return shortSide * longSide;
+        case Species.SQUARE:
+            const sideLength = data.perimeter / 4;
+            return sideLength * sideLength;
+    }
+};
+
+console.log(areaFromShapeData({ perimeter: 10, tag: Species.CIRCLE }));
+console.log(areaFromShapeData({ perimeter: 8, tag: Species.SQUARE }));
+console.log(areaFromShapeData({ perimeter: 6, tag: Species.RECTANGLE, ratio: 2 }));
 
 const someExamples: source<void> = (): void => {
     /*
@@ -220,28 +275,28 @@ const someExamples: source<void> = (): void => {
 When stuff goes wrong
 */
 
-type BigChildObject = {
-    a: BigObjectAgain;
-    b: {
-        a: BigObject;
-    }
-}
-type ReallyBigObject = {
-    child1: BigObject;
-    child2: BigObjectAgain;
-    child3: {
-        grandChild1: BiggerObject;
-        grandChild2: {
-            evenDeeper: BiggerObject;
-        }
-    },
-    child4: {
-        blah: BigObject;
-    },
-    child5: string;
-    child6: number;
-    child7: BigChildObject;
-};
+// type BigChildObject = {
+//     a: BigObjectAgain;
+//     b: {
+//         a: BigObject;
+//     }
+// }
+// type ReallyBigObject = {
+//     child1: BigObject;
+//     child2: BigObjectAgain;
+//     child3: {
+//         grandChild1: BiggerObject;
+//         grandChild2: {
+//             evenDeeper: BiggerObject;
+//         }
+//     },
+//     child4: {
+//         blah: BigObject;
+//     },
+//     child5: string;
+//     child6: number;
+//     child7: BigChildObject;
+// };
 
 // const factory: source<ReallyBigObject> = () => {
 //     return {
@@ -264,7 +319,7 @@ const valueForKey = betrayalMap["key"];
 const betrayed = betrayalMap["not_a_key"];
 // noUncheckedIndexedAccess
 
-betrayed.toUpperCase();
+// betrayed.toUpperCase();
 
 console.log(valueForKey);
 console.log(betrayed);
@@ -276,6 +331,7 @@ lessBetrayed.set("key", "value");
 const fromMap = lessBetrayed.get("key");
 
 // fromMap.toUpperCase()
+console.log(fromMap);
 
 type BaseType = {
     "key1": string;

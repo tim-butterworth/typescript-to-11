@@ -6,7 +6,7 @@ const {
     toTag,
     selfClosingTag,
     simpleTag
-} = require('./simpleDom')
+} = require('./simpleDOM')
 
 const copyFile = (outputDir) => (filePair) => {
     const source = path.join(__dirname, `../node_modules/${filePair.source}`)
@@ -52,11 +52,11 @@ module.exports = {
 	    const outputDirectory = compilation.outputOptions.path
 	    const toDestinationCopy = copyFile(outputDirectory)
 	    const vendorFiles = [];
-            const files = R.compose(
-		R.filter((fileName) => !fileName.includes('test')),
-		R.filter((fileName) => !fileName.includes('map')),
-		R.concat(vendorFiles),
-		R.keys
+		const files = R.compose(
+			R.filter((fileName) => !fileName.includes('test')),
+			R.filter((fileName) => !fileName.includes('map')),
+			R.concat(vendorFiles),
+			R.keys
 	    )(compilation.assets)
 
 	    const renderedHtml = renderHtml(files);

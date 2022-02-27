@@ -10,7 +10,7 @@
         "strict": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
-        // "noUncheckedIndexedAccess": true,
+        "noUncheckedIndexedAccess": false,
         "lib": [
             "es2015",
             "dom"
@@ -24,6 +24,6 @@
     },
     "include": [
         "src/**/*.ts",
-        "node_modules/@types"
+        "/node_modules/@types"
     ]
 }
