@@ -1,4 +1,5 @@
 const customHtmlPlugin = require('./custom-plugin/CustomHtmlPlugin')
+const ESLintPlugin = require('eslint-webpack-plugin')
 const webpack = require('webpack')
 const R = require('ramda')
 const fs = require('fs')
@@ -61,6 +62,7 @@ module.exports = {
         ]
     },
     plugins: [
-        customHtmlPlugin
+        customHtmlPlugin,
+        new ESLintPlugin({ "extensions": "ts" }),
     ]
 };

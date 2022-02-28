@@ -40,8 +40,8 @@ type BiggerObject = {
 }
 // type BiggerObjectAgain = BigObject & { extraKey: string };
 
-const whoCanGetIn: sink<BigObject> = (_obj: BigObject) => {
-    console.log("We did it!")
+const whoCanGetIn: sink<BigObject> = (obj: BigObject) => {
+    console.log("We did it!", obj)
 }
 
 // whoCanGetIn({
@@ -128,18 +128,21 @@ type ShapeData = RectangleData | SquareData | ChircleData;
 
 const areaFromShapeData: f<ShapeData, number> = (data: ShapeData): number => {
     switch (data.tag) {
-        case Species.CIRCLE:
+        case Species.CIRCLE: {
             const diameter = (data.perimeter / Math.PI);
             const radius = diameter / 2;
             return (Math.PI * radius) * radius;
-        case Species.RECTANGLE:
+        }
+        case Species.RECTANGLE: {
             const halfPerimeter = data.perimeter / 2;
             const shortSide = halfPerimeter / (data.ratio + 1)
             const longSide = halfPerimeter - shortSide
             return shortSide * longSide;
-        case Species.SQUARE:
+        }
+        case Species.SQUARE: {
             const sideLength = data.perimeter / 4;
             return sideLength * sideLength;
+        }
     }
 };
 
@@ -221,7 +224,7 @@ const someExamples: source<void> = (): void => {
     };
 
     // is possible even if there is no return value
-    const assertNever = <T>(n: never): T => {
+    const assertNever = <T>(_n: never): T => {
         throw new Error();
     };
     const printAreaName: (shape: Shape) => void = (shape: Shape) => {
@@ -381,6 +384,32 @@ const keys = Object.keys(instance);
 //     console.log(plucked);
 // })
 
+
+/*
+Type guards (the rabbit hole has no bottom)
+*/
+
+const isKeyOf = <O extends object>(key: string | number | symbol, obj: O): key is keyof O => key in obj;
+
+type MapType<T extends string> = { [key in T]: string };
+const doStufWithAMap = <K extends string, T extends string>(maybeKey: K, map: MapType<T>): string | undefined => {
+    if (maybeKey in map) {
+        return map[maybeKey as unknown as T]; // eww gross, basically saying, ok typescript, let me take over here
+    }
+
+    return;
+}
+
+const doStufWithAMapTypeAssertion = <K extends string, T extends string>(maybeKey: K, map: MapType<T>): string | undefined => {
+    if (isKeyOf(maybeKey, map)) {
+        return map[maybeKey];
+    }
+
+    return;
+}
+
 console.log(keys);
+console.log(doStufWithAMap);
+console.log(doStufWithAMapTypeAssertion);
 
 export { someExamples };
